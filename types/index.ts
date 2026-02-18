@@ -1,4 +1,5 @@
 export interface UltravoxCall {
+    [x: string]: any;
     callId: string;
     created: string;
     ended?: string;

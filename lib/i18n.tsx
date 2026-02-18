@@ -267,8 +267,7 @@ export const translations = {
         "ai.apiKey.change": "Cambiar API Key",
         "ai.analyze": "Generar Análisis",
         "ai.analyzing": "Analizando...",
-        "ai.ready.title": "Listo para analizar",
-        "ai.ready.text": "La IA evaluará las llamadas para encontrar patrones.",
+
     }
 };
 
