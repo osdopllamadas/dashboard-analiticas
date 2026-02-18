@@ -11,18 +11,11 @@ import {
     Activity,
     Zap,
     Sparkles,
+    Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModuleId } from "@/types";
-
-const navItems: { label: string; icon: React.ElementType; id: ModuleId }[] = [
-    { label: "Dashboard", icon: LayoutDashboard, id: "dashboard" },
-    { label: "Call History", icon: Phone, id: "calls" },
-    { label: "Analytics", icon: BarChart3, id: "analytics" },
-    { label: "Real-time", icon: Activity, id: "realtime" },
-    { label: "Minutes", icon: Clock, id: "minutes" },
-    { label: "AI Analyst", icon: Sparkles, id: "ai" },
-];
+import { useLanguage } from "@/lib/i18n";
 
 interface SidebarProps {
     collapsed: boolean;
@@ -32,6 +25,21 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: SidebarProps) {
+    const { t, language, setLanguage } = useLanguage();
+
+    const navItems: { label: string; icon: React.ElementType; id: ModuleId }[] = [
+        { label: t("nav.dashboard"), icon: LayoutDashboard, id: "dashboard" },
+        { label: t("nav.calls"), icon: Phone, id: "calls" },
+        { label: t("nav.analytics"), icon: BarChart3, id: "analytics" },
+        { label: t("nav.realtime"), icon: Activity, id: "realtime" },
+        { label: t("nav.minutes"), icon: Clock, id: "minutes" },
+        { label: t("nav.ai"), icon: Sparkles, id: "ai" },
+    ];
+
+    const toggleLanguage = () => {
+        setLanguage(language === "en" ? "es" : "en");
+    };
+
     return (
         <aside
             className={cn(
@@ -63,7 +71,7 @@ export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: S
             <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
                 {!collapsed && (
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 mb-3">
-                        Main Menu
+                        Menu
                     </p>
                 )}
                 {navItems.map((item) => {
@@ -102,6 +110,24 @@ export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: S
 
             {/* Settings & Collapse */}
             <div className="px-3 pb-4 space-y-1 border-t border-white/5 pt-3">
+                {/* Language Toggle */}
+                <button
+                    onClick={toggleLanguage}
+                    className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                        "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                    )}
+                    title={language === "en" ? "Switch to Spanish" : "Cambiar a Inglés"}
+                >
+                    <Globe className="shrink-0 w-5 h-5 text-slate-500" />
+                    {!collapsed && (
+                        <div className="flex items-center justify-between w-full">
+                            <span>{language === "en" ? "Español" : "English"}</span>
+                            <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded uppercase">{language}</span>
+                        </div>
+                    )}
+                </button>
+
                 <button
                     className={cn(
                         "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
@@ -109,7 +135,7 @@ export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: S
                     )}
                 >
                     <Settings className="shrink-0 w-5 h-5 text-slate-500" />
-                    {!collapsed && <span>Settings</span>}
+                    {!collapsed && <span>{t("nav.settings")}</span>}
                 </button>
 
                 <button
@@ -124,7 +150,7 @@ export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: S
                     ) : (
                         <>
                             <ChevronLeft className="shrink-0 w-5 h-5 text-slate-500" />
-                            <span>Collapse</span>
+                            <span>{collapsed ? t("nav.expand") : t("nav.collapse")}</span>
                         </>
                     )}
                 </button>

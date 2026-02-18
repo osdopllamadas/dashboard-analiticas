@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Lock, Zap, ArrowRight, Loader2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface LoginScreenProps {
     onLogin: () => void;
@@ -12,6 +13,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useLanguage();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,7 +26,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         if (username === "OSDOP" && password === "OSDOP2026@") {
             onLogin();
         } else {
-            setError("Credenciales inválidas. Acceso denegado.");
+            setError(t("login.error"));
             setIsLoading(false);
         }
     };
@@ -40,14 +42,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg shadow-blue-500/25 mb-6">
                         <Zap className="w-8 h-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">RENTON CONNECTIVE</h1>
-                    <p className="text-slate-400"> Dashboard de Inteligencia Empresarial</p>
+                    <h1 className="text-3xl font-bold text-white tracking-tight">{t("login.title")}</h1>
+                    <p className="text-slate-400">{t("login.subtitle")}</p>
                 </div>
 
                 <div className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-slate-400 ml-1 uppercase tracking-wider">Usuario</label>
+                            <label className="text-xs font-medium text-slate-400 ml-1 uppercase tracking-wider">{t("login.username")}</label>
                             <input
                                 type="text"
                                 value={username}
@@ -59,7 +61,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-medium text-slate-400 ml-1 uppercase tracking-wider">Contraseña</label>
+                            <label className="text-xs font-medium text-slate-400 ml-1 uppercase tracking-wider">{t("login.password")}</label>
                             <input
                                 type="password"
                                 value={password}
@@ -84,7 +86,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    <span>Iniciar Sesión</span>
+                                    <span>{t("login.submit")}</span>
                                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
@@ -93,7 +95,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 </div>
 
                 <p className="text-center text-xs text-slate-600 mt-8">
-                    &copy; 2026 RENTON CONNECTIVE. Todos los derechos reservados.
+                    {t("login.footer")}
                 </p>
             </div>
         </div>
