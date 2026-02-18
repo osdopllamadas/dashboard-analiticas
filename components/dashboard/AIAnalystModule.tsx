@@ -5,12 +5,14 @@ import { UltravoxCall } from "@/types";
 import { computeStats } from "@/lib/api";
 import { Bot, Lock, Loader2, Sparkles, Send, KeyRound } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/lib/i18n";
 
 interface AIAnalystModuleProps {
     calls: UltravoxCall[];
 }
 
 export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
+    const { t } = useLanguage();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -114,14 +116,14 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                             <Bot className="w-8 h-8 text-white" />
                         </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-center mb-2">AI Analyst Login</h2>
+                    <h2 className="text-2xl font-bold text-center mb-2">{t("ai.login.header")}</h2>
                     <p className="text-sm text-muted-foreground text-center mb-8">
-                        Acceso restringido al módulo de inteligencia
+                        {t("ai.login.desc")}
                     </p>
 
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="text-xs font-medium text-muted-foreground ml-1 mb-1 block">Usuario</label>
+                            <label className="text-xs font-medium text-muted-foreground ml-1 mb-1 block">{t("login.username")}</label>
                             <input
                                 type="text"
                                 value={username}
@@ -131,7 +133,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-medium text-muted-foreground ml-1 mb-1 block">Contraseña</label>
+                            <label className="text-xs font-medium text-muted-foreground ml-1 mb-1 block">{t("login.password")}</label>
                             <input
                                 type="password"
                                 value={password}
@@ -146,7 +148,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                             className="w-full h-10 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors flex items-center justify-center gap-2"
                         >
                             <KeyRound className="w-4 h-4" />
-                            Acceder
+                            {t("ai.login.submit")}
                         </button>
                     </form>
                 </div>
@@ -159,9 +161,9 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">
-                        AI <span className="text-gradient">Analyst</span>
+                        {t("ai.title").split(" ")[0]} <span className="text-gradient">{t("ai.title").split(" ").slice(1).join(" ")}</span>
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-0.5">Análisis estratégico potenciado por IA</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{t("ai.subtitle")}</p>
                 </div>
                 {!analysis && (
                     <div className="flex gap-2 items-center">
@@ -171,14 +173,14 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                                     type="password"
                                     value={apiKey}
                                     onChange={(e) => setApiKey(e.target.value)}
-                                    placeholder="Enter new OpenAI API Key..."
+                                    placeholder={t("ai.apiKey.placeholder")}
                                     className="h-10 px-3 w-64 rounded-lg bg-secondary border border-border text-xs focus:border-blue-500 outline-none"
                                 />
                                 <button
                                     onClick={() => handleSaveKey(apiKey)}
                                     className="h-10 px-4 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium text-xs transition-colors"
                                 >
-                                    Save
+                                    {t("ai.apiKey.save")}
                                 </button>
                             </div>
                         ) : (
@@ -186,7 +188,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                                 onClick={handleChangeKey}
                                 className="text-xs text-muted-foreground hover:text-blue-400 transition-colors mr-2 underline decoration-dashed underline-offset-4"
                             >
-                                Change API Key
+                                {t("ai.apiKey.change")}
                             </button>
                         )}
 
@@ -200,7 +202,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                             ) : (
                                 <Sparkles className="w-4 h-4" />
                             )}
-                            {isAnalyzing ? "Analizando..." : "Generar Análisis"}
+                            {isAnalyzing ? t("ai.status.analyzing") : t("ai.status.generate")}
                         </button>
                     </div>
                 )}
@@ -222,7 +224,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                             onClick={() => setAnalysis(null)}
                             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                         >
-                            Generar nuevo análisis
+                            {t("ai.status.new")}
                         </button>
                     </div>
                 </div>
@@ -231,9 +233,9 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                     <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
                         <Bot className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <p className="text-muted-foreground font-medium">Listo para analizar tus datos</p>
+                    <p className="text-muted-foreground font-medium">{t("ai.ready.title")}</p>
                     <p className="text-sm text-muted-foreground/60 mt-1 max-w-sm text-center">
-                        La IA evaluará {calls.length} llamadas para encontrar patrones, problemas de calidad y oportunidades de ahorro.
+                        {t("ai.ready.desc").replace("{count}", calls.length.toString())}
                     </p>
                 </div>
             )}

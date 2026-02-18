@@ -5,6 +5,7 @@ import { UltravoxCall, getCallDuration, getEndReason, getCallerPhone } from "@/t
 import { getCallCost } from "@/lib/api";
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, Download, Eye } from "lucide-react";
 import { CallDetailModal } from "./CallDetailModal";
+import { useLanguage } from "@/lib/i18n";
 
 interface CallHistoryTableProps {
     calls: UltravoxCall[];
@@ -39,35 +40,46 @@ function formatDuration(seconds: number): string {
     return r > 0 ? `${m}m ${r}s` : `${m}m`;
 }
 
-function exportToCSV(calls: UltravoxCall[]) {
-    const headers = ["Fecha", "Call ID", "Teléfono", "Duración", "Razón de fin", "Costo", "Resumen"];
-    const rows = calls.map((c) => [
-        new Date(c.created).toLocaleString("es"),
-        c.callId,
-        getCallerPhone(c),
-        formatDuration(getCallDuration(c)),
-        getEndReason(c),
-        getCallCost(c).toFixed(4),
-        (c.shortSummary || c.summary || "").replace(/,/g, ";"),
-    ]);
 
-    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `llamadas-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
 
 export function CallHistoryTable({ calls }: CallHistoryTableProps) {
+    const { t, language } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("");
     const [page, setPage] = useState(1);
     const [sortKey, setSortKey] = useState<SortKey>("created");
     const [sortDir, setSortDir] = useState<SortDir>("desc");
     const [selectedCall, setSelectedCall] = useState<UltravoxCall | null>(null);
     const itemsPerPage = 15;
+
+    const exportToCSV = (callsToExport: UltravoxCall[]) => {
+        const headers = [
+            t("table.date"),
+            t("table.callId"),
+            t("table.phone"),
+            t("table.duration"),
+            t("table.endReason"),
+            t("table.cost"),
+            t("table.summary")
+        ];
+        const rows = callsToExport.map((c) => [
+            new Date(c.created).toLocaleString(language === "en" ? "en-US" : "es-ES"),
+            c.callId,
+            getCallerPhone(c),
+            formatDuration(getCallDuration(c)),
+            getEndReason(c),
+            getCallCost(c).toFixed(4),
+            (c.shortSummary || c.summary || "").replace(/,/g, ";"),
+        ]);
+
+        const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `calls-${new Date().toISOString().split("T")[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
     const handleSort = (key: SortKey) => {
         if (sortKey === key) {
@@ -137,15 +149,15 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-border">
                     <div>
-                        <h3 className="text-lg font-semibold text-foreground">Historial de Llamadas</h3>
-                        <p className="text-sm text-muted-foreground mt-0.5">{filtered.length.toLocaleString()} llamadas</p>
+                        <h3 className="text-lg font-semibold text-foreground">{t("table.title")}</h3>
+                        <p className="text-sm text-muted-foreground mt-0.5">{t("table.count").replace("{count}", filtered.length.toLocaleString())}</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <input
                                 type="search"
-                                placeholder="Buscar llamadas..."
+                                placeholder={t("table.search")}
                                 value={searchTerm}
                                 onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
                                 className="h-9 pl-9 pr-4 w-56 rounded-lg text-sm bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -156,7 +168,7 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                             className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm bg-secondary border border-border text-muted-foreground hover:text-foreground transition-colors"
                         >
                             <Download className="w-4 h-4" />
-                            Exportar
+                            {t("table.export")}
                         </button>
                     </div>
                 </div>
@@ -167,19 +179,19 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                         <thead>
                             <tr className="border-b border-border">
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    Fecha <SortButton col="created" />
+                                    {t("table.date")} <SortButton col="created" />
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Teléfono</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("table.phone")}</th>
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    Duración <SortButton col="duration" />
-                                </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    Estado <SortButton col="endReason" />
+                                    {t("table.duration")} <SortButton col="duration" />
                                 </th>
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                    Costo <SortButton col="cost" />
+                                    {t("table.status")} <SortButton col="endReason" />
                                 </th>
-                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Resumen</th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                    {t("table.cost")} <SortButton col="cost" />
+                                </th>
+                                <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t("table.summary")}</th>
                                 <th className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider"></th>
                             </tr>
                         </thead>
@@ -195,7 +207,7 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                                         onClick={() => setSelectedCall(call)}
                                     >
                                         <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                                            {new Date(call.created).toLocaleString("es", {
+                                            {new Date(call.created).toLocaleString(language === "en" ? "en-US" : "es-ES", {
                                                 month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
                                             })}
                                         </td>
@@ -228,7 +240,7 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                             {paginated.length === 0 && (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">
-                                        No se encontraron llamadas
+                                        {t("table.noCalls")}
                                     </td>
                                 </tr>
                             )}
@@ -239,8 +251,8 @@ export function CallHistoryTable({ calls }: CallHistoryTableProps) {
                 {/* Pagination */}
                 <div className="flex items-center justify-between px-6 py-4 border-t border-border">
                     <span className="text-sm text-muted-foreground">
-                        Mostrando {Math.min((page - 1) * itemsPerPage + 1, sorted.length)}–
-                        {Math.min(page * itemsPerPage, sorted.length)} de {sorted.length.toLocaleString()}
+                        {t("table.showing")} {Math.min((page - 1) * itemsPerPage + 1, sorted.length)}–
+                        {Math.min(page * itemsPerPage, sorted.length)} {t("table.of")} {sorted.length.toLocaleString()}
                     </span>
                     <div className="flex items-center gap-2">
                         <button

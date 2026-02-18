@@ -57,10 +57,10 @@ export function Sidebar({ collapsed, onToggle, activeModule, onModuleChange }: S
                     {!collapsed && (
                         <div className="overflow-hidden">
                             <p className="text-white font-bold text-sm leading-tight whitespace-nowrap">
-                                Ultravoz Conecta
+                                {t("brand.app")}
                             </p>
                             <p className="text-blue-400 text-xs font-medium whitespace-nowrap">
-                                Renton Connective
+                                {t("brand.org")}
                             </p>
                         </div>
                     )}

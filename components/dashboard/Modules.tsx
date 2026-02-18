@@ -13,6 +13,7 @@ import { HourlyActivityChart } from "./HourlyActivityChart";
 import { HangupSourceChart } from "./HangupSourceChart";
 export { AIAnalystModule } from "./AIAnalystModule";
 import { useState, useMemo } from "react";
+import { useLanguage } from "@/lib/i18n";
 
 interface DashboardModuleProps {
     calls: UltravoxCall[];
@@ -63,6 +64,7 @@ function applyFilters(calls: UltravoxCall[], filters: FilterState): UltravoxCall
 
 // ─── MODULE: DASHBOARD ───────────────────────────────────────────────────────
 export function DashboardModule({ calls }: DashboardModuleProps) {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState<FilterState>(INIT);
     const filtered = useMemo(() => applyFilters(calls, filters), [calls, filters]);
 
@@ -70,9 +72,9 @@ export function DashboardModule({ calls }: DashboardModuleProps) {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                    Dashboard <span className="text-gradient">Overview</span>
+                    {t("dashboard.title")} <span className="text-gradient">{t("dashboard.subtitle")}</span>
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">Resumen general de llamadas</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t("dashboard.desc")}</p>
             </div>
             <FilterBar filters={filters} onChange={setFilters} totalResults={filtered.length} />
             <KPIGrid calls={filtered} />
@@ -91,6 +93,7 @@ export function DashboardModule({ calls }: DashboardModuleProps) {
 
 // ─── MODULE: CALL HISTORY ─────────────────────────────────────────────────────
 export function CallHistoryModule({ calls }: DashboardModuleProps) {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState<FilterState>({
         ...INIT,
         preset: "all",
@@ -103,10 +106,10 @@ export function CallHistoryModule({ calls }: DashboardModuleProps) {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                    Historial de <span className="text-gradient">Llamadas</span>
+                    {t("history.title")} <span className="text-gradient">{t("history.subtitle")}</span>
                 </h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                    Registro completo — <span className="text-foreground font-semibold">{calls.length.toLocaleString()}</span> llamadas en total
+                    {t("history.desc").replace("{count}", calls.length.toLocaleString())}
                 </p>
             </div>
             <FilterBar filters={filters} onChange={setFilters} totalResults={filtered.length} showPhoneFilter />
@@ -117,6 +120,7 @@ export function CallHistoryModule({ calls }: DashboardModuleProps) {
 
 // ─── MODULE: ANALYTICS ───────────────────────────────────────────────────────
 export function AnalyticsModule({ calls }: DashboardModuleProps) {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState<FilterState>(INIT);
     const filtered = useMemo(() => applyFilters(calls, filters), [calls, filters]);
 
@@ -124,9 +128,9 @@ export function AnalyticsModule({ calls }: DashboardModuleProps) {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                    Analytics <span className="text-gradient">Avanzado</span>
+                    {t("analytics.title")} <span className="text-gradient">{t("analytics.subtitle")}</span>
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">Análisis detallado de métricas y tendencias</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t("analytics.desc")}</p>
             </div>
             <FilterBar filters={filters} onChange={setFilters} totalResults={filtered.length} />
             <KPIGrid calls={filtered} />
@@ -151,6 +155,7 @@ export function AnalyticsModule({ calls }: DashboardModuleProps) {
 
 // ─── MODULE: REAL-TIME ────────────────────────────────────────────────────────
 export function RealtimeModule({ calls }: DashboardModuleProps) {
+    const { t } = useLanguage();
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     const [filters, setFilters] = useState<FilterState>({
@@ -171,9 +176,9 @@ export function RealtimeModule({ calls }: DashboardModuleProps) {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                    Actividad <span className="text-gradient">en Tiempo Real</span>
+                    {t("realtime.title")} <span className="text-gradient">{t("realtime.subtitle")}</span>
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">Llamadas de hoy — actualización cada 3 minutos</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t("realtime.desc")}</p>
             </div>
 
             {/* Active Calls Section */}
@@ -183,7 +188,7 @@ export function RealtimeModule({ calls }: DashboardModuleProps) {
                 >
                     <div className="flex justify-between items-start mb-2">
                         <div>
-                            <h3 className="text-sm font-medium text-blue-400">Llamadas Activas</h3>
+                            <h3 className="text-sm font-medium text-blue-400">{t("realtime.activeCalls")}</h3>
                             <div className="text-3xl font-bold text-foreground mt-1">
                                 {activeCalls.length}
                             </div>
@@ -215,12 +220,12 @@ export function RealtimeModule({ calls }: DashboardModuleProps) {
                 style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
             >
                 <div className="p-6 border-b border-border">
-                    <h3 className="text-lg font-semibold text-foreground">Últimas llamadas de hoy</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("realtime.recent")}</h3>
                 </div>
                 <div className="divide-y divide-border/50">
                     {recentCalls.length === 0 ? (
                         <div className="p-8 text-center text-muted-foreground text-sm">
-                            No hay llamadas hoy todavía
+                            {t("realtime.noCalls")}
                         </div>
                     ) : (
                         recentCalls.map((call) => {
@@ -263,6 +268,7 @@ export function RealtimeModule({ calls }: DashboardModuleProps) {
 
 // ─── MODULE: MINUTES ─────────────────────────────────────────────────────────
 export function MinutesModule({ calls }: DashboardModuleProps) {
+    const { t } = useLanguage();
     const [filters, setFilters] = useState<FilterState>(INIT);
     const filtered = useMemo(() => applyFilters(calls, filters), [calls, filters]);
 
@@ -271,19 +277,19 @@ export function MinutesModule({ calls }: DashboardModuleProps) {
     const totalCost = filtered.reduce((a, c) => a + getCallCost(c), 0);
 
     const statCards = [
-        { label: "Minutos Totales", value: (totalSec / 60).toFixed(1) + "m", color: "text-blue-400" },
-        { label: "Minutos Facturados", value: (billedSec / 60).toFixed(1) + "m", color: "text-green-400" },
-        { label: "Costo Total", value: "$" + totalCost.toFixed(4), color: "text-purple-400" },
-        { label: "Costo/Minuto", value: billedSec > 0 ? "$" + (totalCost / (billedSec / 60)).toFixed(4) : "$0.0000", color: "text-orange-400" },
+        { label: t("kpi.totalMinutes"), value: (totalSec / 60).toFixed(1) + "m", color: "text-blue-400" },
+        { label: t("kpi.billed"), value: (billedSec / 60).toFixed(1) + "m", color: "text-green-400" },
+        { label: t("kpi.totalCost"), value: "$" + totalCost.toFixed(4), color: "text-purple-400" },
+        { label: t("kpi.costPerMin"), value: billedSec > 0 ? "$" + (totalCost / (billedSec / 60)).toFixed(4) : "$0.0000", color: "text-orange-400" },
     ];
 
     return (
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-foreground">
-                    Análisis de <span className="text-gradient">Minutos</span>
+                    {t("minutes.title")} <span className="text-gradient">{t("minutes.subtitle")}</span>
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">Consumo de minutos totales y facturados</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t("minutes.desc")}</p>
             </div>
             <FilterBar filters={filters} onChange={setFilters} totalResults={filtered.length} />
 
@@ -308,13 +314,13 @@ export function MinutesModule({ calls }: DashboardModuleProps) {
                 style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
             >
                 <div className="p-6 border-b border-border">
-                    <h3 className="text-lg font-semibold text-foreground">Desglose por Día</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{t("minutes.breakdown")}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-border">
-                                {["Fecha", "Llamadas", "Min. Totales", "Min. Facturados", "Costo"].map((h) => (
+                                {[t("minutes.table.date"), t("minutes.table.calls"), t("minutes.table.total"), t("minutes.table.billed"), t("minutes.table.cost")].map((h) => (
                                     <th key={h} className="text-left px-6 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
                                 ))}
                             </tr>

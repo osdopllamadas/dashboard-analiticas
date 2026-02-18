@@ -3,6 +3,7 @@
 import { FilterState, DatePreset } from "@/types";
 import { Calendar, Filter, X, ChevronDown, Phone, Search } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/lib/i18n";
 
 interface FilterBarProps {
     filters: FilterState;
@@ -11,24 +12,7 @@ interface FilterBarProps {
     showPhoneFilter?: boolean;
 }
 
-const DATE_PRESETS: { label: string; value: DatePreset }[] = [
-    { label: "Today", value: "today" },
-    { label: "Yesterday", value: "yesterday" },
-    { label: "Last 7 days", value: "7d" },
-    { label: "Last 30 days", value: "30d" },
-    { label: "This month", value: "month" },
-    { label: "All time", value: "all" },
-];
 
-const END_REASONS = [
-    { label: "All", value: "" },
-    { label: "User Hangup", value: "user-hangup" },
-    { label: "Agent Hangup", value: "agent-hangup" },
-    { label: "Hangup", value: "hangup" },
-    { label: "Error", value: "error" },
-    { label: "Failed", value: "failed" },
-    { label: "Timeout", value: "timeout" },
-];
 
 export function applyDatePreset(preset: DatePreset): { startDate: string; endDate: string } {
     const now = new Date();
@@ -71,7 +55,27 @@ export function applyDatePreset(preset: DatePreset): { startDate: string; endDat
 }
 
 export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = false }: FilterBarProps) {
+    const { t } = useLanguage();
     const [showEndReason, setShowEndReason] = useState(false);
+
+    const DATE_PRESETS: { label: string; value: DatePreset }[] = [
+        { label: t("filter.today"), value: "today" },
+        { label: t("filter.yesterday"), value: "yesterday" },
+        { label: t("filter.last7"), value: "7d" },
+        { label: t("filter.last30"), value: "30d" },
+        { label: t("filter.month"), value: "month" },
+        { label: t("filter.all"), value: "all" },
+    ];
+
+    const END_REASONS = [
+        { label: t("reason.all"), value: "" },
+        { label: t("reason.userHangup"), value: "user-hangup" },
+        { label: t("reason.agentHangup"), value: "agent-hangup" },
+        { label: t("reason.hangup"), value: "hangup" },
+        { label: t("reason.error"), value: "error" },
+        { label: t("reason.failed"), value: "failed" },
+        { label: t("reason.timeout"), value: "timeout" },
+    ];
 
     const activeFiltersCount = [
         filters.startDate,
@@ -137,7 +141,7 @@ export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = f
                         }
                         className="h-8 px-2 rounded-lg text-xs bg-secondary border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <span className="text-muted-foreground text-xs">to</span>
+                    <span className="text-muted-foreground text-xs">{t("filter.to")}</span>
                     <input
                         type="date"
                         value={filters.endDate}
@@ -155,7 +159,7 @@ export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = f
                     <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
                     <input
                         type="text"
-                        placeholder="Phone number..."
+                        placeholder={t("filter.phonePlaceholder")}
                         value={filters.phoneNumber}
                         onChange={(e) => onChange({ ...filters, phoneNumber: e.target.value })}
                         className="h-8 w-36 px-2 rounded-lg text-xs bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -166,7 +170,7 @@ export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = f
 
                 {/* Min Duration */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">Min seg:</span>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{t("filter.minSec")}</span>
                     <input
                         type="number"
                         placeholder="0"
@@ -185,7 +189,7 @@ export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = f
                         <span>
                             {filters.endReason
                                 ? END_REASONS.find((r) => r.value === filters.endReason)?.label
-                                : "Estado"}
+                                : t("filter.status")}
                         </span>
                         <ChevronDown className="w-3 h-3" />
                     </button>
@@ -224,12 +228,12 @@ export function FilterBar({ filters, onChange, totalResults, showPhoneFilter = f
                             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                         >
                             <X className="w-3 h-3" />
-                            Limpiar ({activeFiltersCount})
+                            {t("filter.clear")} ({activeFiltersCount})
                         </button>
                     )}
                     <span className="text-xs text-muted-foreground">
                         <span className="font-semibold text-foreground">{totalResults.toLocaleString()}</span>{" "}
-                        resultados
+                        {t("filter.results")}
                     </span>
                 </div>
             </div>

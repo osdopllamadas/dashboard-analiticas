@@ -3,6 +3,7 @@
 import { UltravoxCall } from "@/types";
 import { Phone, CheckCircle, AlertCircle, Clock, TrendingUp, DollarSign } from "lucide-react";
 import { computeStats } from "@/lib/api";
+import { useLanguage } from "@/lib/i18n";
 
 interface KPIGridProps {
     calls: UltravoxCall[];
@@ -74,38 +75,39 @@ function KPICard({ title, value, subtitle, icon: Icon, gradient, iconBg, delay =
 }
 
 export function KPIGrid({ calls }: KPIGridProps) {
+    const { t } = useLanguage();
     const stats = computeStats(calls);
 
     const cards: KPICardProps[] = [
         {
-            title: "Total Calls",
+            title: t("kpi.totalCalls"),
             value: stats.totalCalls.toLocaleString(),
-            subtitle: `${stats.effectiveCalls} effective`,
+            subtitle: `${stats.effectiveCalls} ${t("kpi.effective")}`,
             icon: Phone,
             gradient: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
             iconBg: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
             delay: 0,
         },
         {
-            title: "Success Rate",
+            title: t("kpi.successRate"),
             value: `${stats.successRate}%`,
-            subtitle: `${stats.effectiveCalls} of ${stats.totalCalls} calls`,
+            subtitle: `${stats.effectiveCalls} ${t("kpi.of")} ${stats.totalCalls} ${t("kpi.calls")}`,
             icon: CheckCircle,
             gradient: "linear-gradient(135deg, #10b981, #059669)",
             iconBg: "linear-gradient(135deg, #10b981, #059669)",
             delay: 80,
         },
         {
-            title: "Errors",
+            title: t("kpi.errors"),
             value: stats.errorCalls,
-            subtitle: `${stats.totalCalls > 0 ? ((stats.errorCalls / stats.totalCalls) * 100).toFixed(1) : 0}% error rate`,
+            subtitle: `${stats.totalCalls > 0 ? ((stats.errorCalls / stats.totalCalls) * 100).toFixed(1) : 0}% ${t("kpi.errorRate")}`,
             icon: AlertCircle,
             gradient: "linear-gradient(135deg, #ef4444, #dc2626)",
             iconBg: "linear-gradient(135deg, #ef4444, #dc2626)",
             delay: 160,
         },
         {
-            title: "Avg Duration",
+            title: t("kpi.avgDuration"),
             value: formatTime(stats.avgDuration),
             subtitle: `Total: ${formatMinutes(stats.totalDurationSeconds)}`,
             icon: Clock,
@@ -114,18 +116,18 @@ export function KPIGrid({ calls }: KPIGridProps) {
             delay: 240,
         },
         {
-            title: "Total Minutes",
+            title: t("kpi.totalMinutes"),
             value: formatMinutes(stats.totalDurationSeconds),
-            subtitle: `Billed: ${formatMinutes(stats.totalBilledSeconds)}`,
+            subtitle: `${t("kpi.billed")}: ${formatMinutes(stats.totalBilledSeconds)}`,
             icon: TrendingUp,
             gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
             iconBg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
             delay: 320,
         },
         {
-            title: "Total Cost",
+            title: t("kpi.totalCost"),
             value: formatCost(stats.totalCost),
-            subtitle: `Avg ${formatCost(stats.totalCalls > 0 ? stats.totalCost / stats.totalCalls : 0)}/call`,
+            subtitle: t("kpi.avgCallCost").replace("{cost}", formatCost(stats.totalCalls > 0 ? stats.totalCost / stats.totalCalls : 0)),
             icon: DollarSign,
             gradient: "linear-gradient(135deg, #06b6d4, #0891b2)",
             iconBg: "linear-gradient(135deg, #06b6d4, #0891b2)",

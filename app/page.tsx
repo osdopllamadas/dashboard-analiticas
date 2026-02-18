@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useCalls } from "@/lib/hooks/useCalls";
 import { useActiveModule } from "@/components/dashboard/LayoutShell";
@@ -41,8 +41,20 @@ export default function Dashboard() {
     const { calls, loading, error, lastUpdated, secondsUntilRefresh, refresh } = useCalls();
     const activeModule = useActiveModule();
 
+    useEffect(() => {
+        const sessionAuth = sessionStorage.getItem("is_authenticated");
+        if (sessionAuth === "true") {
+            setIsAuthenticated(true);
+        }
+    }, []);
+
+    const handleLogin = () => {
+        setIsAuthenticated(true);
+        sessionStorage.setItem("is_authenticated", "true");
+    };
+
     if (!isAuthenticated) {
-        return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
+        return <LoginScreen onLogin={handleLogin} />;
     }
 
     if (loading && calls.length === 0) {
