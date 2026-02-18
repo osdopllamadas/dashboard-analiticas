@@ -19,6 +19,28 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState<string | null>(null);
+    const [showKeyInput, setShowKeyInput] = useState(false);
+
+    // Load API Key from localStorage
+    useState(() => {
+        const savedKey = localStorage.getItem("openai_api_key");
+        if (savedKey) {
+            setApiKey(savedKey);
+        } else {
+            setShowKeyInput(true);
+        }
+    });
+
+    const handleSaveKey = (key: string) => {
+        setApiKey(key);
+        localStorage.setItem("openai_api_key", key);
+        setShowKeyInput(false);
+    };
+
+    const handleChangeKey = () => {
+        setShowKeyInput(true);
+        setAnalysis(null);
+    };
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,6 +55,7 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
     const handleAnalyze = async () => {
         if (!apiKey) {
             setError("Por favor ingresa una API Key válida (OpenAI)");
+            setShowKeyInput(true);
             return;
         }
         setIsAnalyzing(true);
@@ -73,12 +96,14 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
             setAnalysis(data.analysis);
         } catch (err: any) {
             setError(err.message || "Hubo un error al conectar con la IA. Verifica tu API Key.");
+            if (err.message.includes("Key")) setShowKeyInput(true);
         } finally {
             setIsAnalyzing(false);
         }
     };
 
     if (!isLoggedIn) {
+        // ... (Login form remains same)
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] animate-slide-up">
                 <div
@@ -139,17 +164,35 @@ export function AIAnalystModule({ calls }: AIAnalystModuleProps) {
                     <p className="text-sm text-muted-foreground mt-0.5">Análisis estratégico potenciado por IA</p>
                 </div>
                 {!analysis && (
-                    <div className="flex gap-2">
-                        <input
-                            type="password"
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                            placeholder="OpenAI API Key (sk-...)"
-                            className="h-10 px-3 w-64 rounded-lg bg-secondary border border-border text-xs focus:border-blue-500 outline-none"
-                        />
+                    <div className="flex gap-2 items-center">
+                        {showKeyInput ? (
+                            <div className="flex gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
+                                <input
+                                    type="password"
+                                    value={apiKey}
+                                    onChange={(e) => setApiKey(e.target.value)}
+                                    placeholder="Enter new OpenAI API Key..."
+                                    className="h-10 px-3 w-64 rounded-lg bg-secondary border border-border text-xs focus:border-blue-500 outline-none"
+                                />
+                                <button
+                                    onClick={() => handleSaveKey(apiKey)}
+                                    className="h-10 px-4 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium text-xs transition-colors"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleChangeKey}
+                                className="text-xs text-muted-foreground hover:text-blue-400 transition-colors mr-2 underline decoration-dashed underline-offset-4"
+                            >
+                                Change API Key
+                            </button>
+                        )}
+
                         <button
                             onClick={handleAnalyze}
-                            disabled={isAnalyzing || !apiKey}
+                            disabled={isAnalyzing || (!apiKey && !showKeyInput)}
                             className="h-10 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             {isAnalyzing ? (

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { useCalls } from "@/lib/hooks/useCalls";
 import { useActiveModule } from "@/components/dashboard/LayoutShell";
 import {
@@ -10,6 +12,7 @@ import {
     MinutesModule,
     AIAnalystModule,
 } from "@/components/dashboard/Modules";
+import { LoginScreen } from "@/components/LoginScreen";
 import { RefreshCw, Wifi, WifiOff } from "lucide-react";
 
 function LoadingSkeleton() {
@@ -34,8 +37,13 @@ function LoadingSkeleton() {
 }
 
 export default function Dashboard() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const { calls, loading, error, lastUpdated, secondsUntilRefresh, refresh } = useCalls();
     const activeModule = useActiveModule();
+
+    if (!isAuthenticated) {
+        return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
+    }
 
     if (loading && calls.length === 0) {
         return <LoadingSkeleton />;
