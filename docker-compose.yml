@@ -3,9 +3,10 @@ version: '3'
 services:
   web:
     container_name: crm-callcenter
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/osdopllamadas/dashboard-analiticas:latest
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     restart: always
     ports:
       - "3000:3000"
