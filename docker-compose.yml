@@ -6,9 +6,7 @@ services:
     image: ghcr.io/osdopllamadas/dashboard-analiticas:latest
     restart: always
     ports:
-      - target: 3000
-        published: 3000
-        mode: host
+      - "3000:3000"
     environment:
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
@@ -16,21 +14,3 @@ services:
     # --- REDES ---
     networks:
       - default
-      - proxy
-
-    # --- ETIQUETAS TRAEFIK ---
-    deploy:
-      labels:
-        - "traefik.enable=true"
-        # Configuración para el dominio mateoia.store
-        - "traefik.http.routers.crm-dashboard.rule=Host(`mateoia.store`)"
-        - "traefik.http.routers.crm-dashboard.entrypoints=websecure"
-        - "traefik.http.routers.crm-dashboard.tls.certresolver=letsencryptresolver"
-        - "traefik.http.routers.crm-dashboard.service=crm-dashboard"
-        - "traefik.http.services.crm-dashboard.loadbalancer.server.port=3000"
-
-# --- DEFINICIÓN DE RED EXTERNA ---
-networks:
-  proxy:
-    external: true
-    name: BelanzeNet
