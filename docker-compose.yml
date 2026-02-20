@@ -5,6 +5,10 @@ services:
     container_name: crm-callcenter
     image: ghcr.io/osdopllamadas/dashboard-analiticas:latest
     restart: always
+    ports:
+      - target: 3000
+        published: 3000
+        mode: host
     environment:
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
@@ -24,7 +28,6 @@ services:
         - "traefik.http.routers.crm-dashboard.tls.certresolver=letsencryptresolver"
         - "traefik.http.routers.crm-dashboard.service=crm-dashboard"
         - "traefik.http.services.crm-dashboard.loadbalancer.server.port=3000"
-        - "traefik.docker.network=BelanzeNet"
 
 # --- DEFINICIÓN DE RED EXTERNA ---
 networks:
