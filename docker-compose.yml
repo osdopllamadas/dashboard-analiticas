@@ -4,22 +4,16 @@ services:
   dashboard:
     build: .
     restart: always
-    ports:
-      - "3000:3000"
     env_file:
       - .env.local
     deploy:
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=BelanzeNet"
         # Configuración del Router para el dominio mateoia.store
         - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
         - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
         - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
-        # Redirección automática de HTTP a HTTPS
-        - "traefik.http.routers.mateo-dashboard-http.rule=Host(`dashboard.mateoia.store`)"
-        - "traefik.http.routers.mateo-dashboard-http.entrypoints=web"
-        - "traefik.http.routers.mateo-dashboard-http.middlewares=redirect-to-https"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         # Configuración del Servicio
         - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
 
