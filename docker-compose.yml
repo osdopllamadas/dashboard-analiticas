@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: ghcr.io/osdopllamadas/dashboard-analiticas:latest
     restart: always
     networks:
       - BelanzeNet
