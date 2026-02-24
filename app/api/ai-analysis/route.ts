@@ -1,53 +1,65 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 
 export async function POST(req: Request) {
     try {
         const { stats, apiKey } = await req.json();
 
         if (!apiKey) {
-            return NextResponse.json({ error: "API Key required" }, { status: 400 });
+            return NextResponse.json({ error: "API Key is required" }, { status: 400 });
         }
 
-        const openai = new OpenAI({
-            apiKey: apiKey,
-        });
-
         const prompt = `
-Actúa como un Analista Experto de Call Center y Calidad de Servicio. Analiza los siguientes datos de rendimiento de llamadas de los últimos 30 días y genera un informe ejecutivo en formato Markdown.
+        You are an expert Data Analyst for a Call Center.
+        Analyze the following call center performance stats for the last 30 days and provide a strategic summary.
+        
+        Data:
+        - Total Calls: ${stats.totalCalls}
+        - Success Rate: ${stats.successRate}
+        - Avg Duration: ${stats.avgDuration}
+        - Total Cost: $${stats.totalCost}
+        - Error Rate: ${stats.errorRate}
+        - Top Hangup Reasons: ${JSON.stringify(stats.topHangupReasons)}
 
-DATOS:
-- Total Llamadas: ${stats.totalCalls}
-- Tasa de Éxito: ${stats.successRate}%
-- Tasa de Error: ${stats.errorRate}
-- Duración Promedio: ${stats.avgDuration} segundos
-- Costo Total: $${stats.totalCost.toFixed(2)}
-- Top Razones de Corte: ${JSON.stringify(stats.topHangupReasons)}
-- Período: ${stats.period}
+        Please provide:
+        1. A brief executive summary (2-3 sentences).
+        2. Three key positive trends.
+        3. Three areas for improvement (focus on cost and errors).
+        4. A specific recommendation to improve the Success Rate.
 
-ESTRUCTURA DEL REPORTE (en Español):
-1. **Resumen Ejecutivo**: Breve visión general del desempeño.
-2. **Análisis de Calidad**: Evalúa la tasa de éxito y errores. Si la tasa de error es >10%, marca como Crítico.
-3. **Eficiencia y Costos**: Analiza la duración y el gasto. ¿Son las llamadas demasiado cortas (fallidas) o demasiado largas (ineficientes)?
-4. **Patrones de Desconexión**: Interpreta las razones de corte. ¿El usuario corta (desinterés) o el agente (fallo técnico/lógico)?
-5. **Recomendaciones Estratégicas**: 3 acciones concretas para mejorar el agente IA.
+        Format the output in clean Markdown. Use bolding for numbers and key terms.
+        `;
 
-Sé directo, profesional y usa negritas para resaltar puntos clave.
-`;
-
-        const completion = await openai.chat.completions.create({
-            messages: [{ role: "user", content: prompt }],
-            model: "gpt-3.5-turbo",
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { role: "system", content: "You are a helpful and professional business intelligence analyst." },
+                    { role: "user", content: prompt }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000
+            })
         });
 
-        const analysis = completion.choices[0].message.content;
+        if (!response.ok) {
+            const errorData = await response.json();
+            return NextResponse.json({ error: errorData.error?.message || "OpenAI API Error" }, { status: response.status });
+        }
+
+        const data = await response.json();
+        const analysis = data.choices[0]?.message?.content || "No analysis generated.";
 
         return NextResponse.json({ analysis });
 
     } catch (error: any) {
         console.error("AI Analysis Error:", error);
         return NextResponse.json(
-            { error: error.message || "Error generating analysis" },
+            { error: error.message || "Internal Server Error" },
             { status: 500 }
         );
     }

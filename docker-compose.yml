@@ -1,16 +1,21 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
-    container_name: crm-callcenter
-    image: ghcr.io/osdopllamadas/dashboard-analiticas:latest
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build: .
     restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-      # Add other environment variables here as needed
+    networks:
+      - BelanzeNet
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=BelanzeNet"
+        - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
+        - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
+        - "traefik.http.routers.mateo-dashboard.tls=true"
+        - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
+
+networks:
+  BelanzeNet:
+    external: true

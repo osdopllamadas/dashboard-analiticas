@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { LayoutShell } from "@/components/dashboard/LayoutShell";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 import { LanguageProvider } from "@/lib/i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "DASHCALL APP",
-    description: "Plataforma de análisis de llamadas — Renton Connective",
+    title: "CRM Call Center Enterprise",
+    description: "Sistema CRM nivel enterprise con arquitectura multi-tenant e integración de IA",
 };
 
 export default function RootLayout({
@@ -17,10 +18,18 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="es" className="dark">
+        <html lang="es" suppressHydrationWarning>
             <body className={inter.className}>
                 <LanguageProvider>
-                    <LayoutShell>{children}</LayoutShell>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        {children}
+                        <Toaster position="top-right" richColors />
+                    </ThemeProvider>
                 </LanguageProvider>
             </body>
         </html>

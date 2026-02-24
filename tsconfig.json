@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "target": "ES2020",
         "lib": [
             "dom",
             "dom.iterable",
@@ -24,6 +25,21 @@
         "paths": {
             "@/*": [
                 "./*"
+            ],
+            "@/components/*": [
+                "./components/*"
+            ],
+            "@/lib/*": [
+                "./lib/*"
+            ],
+            "@/types/*": [
+                "./types/*"
+            ],
+            "@/hooks/*": [
+                "./hooks/*"
+            ],
+            "@/app/*": [
+                "./app/*"
             ]
         }
     },
@@ -34,7 +50,6 @@
         ".next/types/**/*.ts"
     ],
     "exclude": [
-        "node_modules",
-        "lib/_supabase_bak"
+        "node_modules"
     ]
 }
