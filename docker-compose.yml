@@ -12,6 +12,7 @@ services:
         - "traefik.docker.network=BelanzeNet"
         - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
         - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
+        - "traefik.http.routers.mateo-dashboard.tls=true"
         - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
         - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
 
