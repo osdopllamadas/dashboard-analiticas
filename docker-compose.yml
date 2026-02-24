@@ -10,11 +10,17 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=BelanzeNet"
-        - "traefik.http.routers.mateo-crm-rt.rule=Host(`dashboard.mateoia.store`)"
-        - "traefik.http.routers.mateo-crm-rt.entrypoints=websecure"
-        - "traefik.http.routers.mateo-crm-rt.tls=true"
-        - "traefik.http.routers.mateo-crm-rt.tls.certresolver=letsencryptresolver"
-        - "traefik.http.routers.mateo-crm-rt.service=mateo-crm-svc"
+        # Router HTTPS
+        - "traefik.http.routers.mateo-crm-secure.rule=Host(`dashboard.mateoia.store`)"
+        - "traefik.http.routers.mateo-crm-secure.entrypoints=websecure"
+        - "traefik.http.routers.mateo-crm-secure.tls=true"
+        - "traefik.http.routers.mateo-crm-secure.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.mateo-crm-secure.service=mateo-crm-svc"
+        # Router HTTP (Fallback para pruebas)
+        - "traefik.http.routers.mateo-crm-http.rule=Host(`dashboard.mateoia.store`)"
+        - "traefik.http.routers.mateo-crm-http.entrypoints=web"
+        - "traefik.http.routers.mateo-crm-http.service=mateo-crm-svc"
+        # Servicio
         - "traefik.http.services.mateo-crm-svc.loadbalancer.server.port=3000"
 
 networks:
