@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  dashboard:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    labels:
+      - "traefik.enable=true"
+      # Configuración del Router para el dominio mateoia.store
+      - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
+      - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencrypt"
+      # Redirección automática de HTTP a HTTPS (opcional si Traefik ya lo hace globalmente)
+      - "traefik.http.routers.mateo-dashboard-http.rule=Host(`dashboard.mateoia.store`)"
+      - "traefik.http.routers.mateo-dashboard-http.entrypoints=web"
+      - "traefik.http.routers.mateo-dashboard-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # Configuración del Servicio
+      - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
+
+networks:
+  default:
+    external:
+      name: traefik_public # Ajusta este nombre al nombre de la red que usa tu Traefik
