@@ -10,12 +10,12 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=BelanzeNet"
-        - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
-        - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
-        - "traefik.http.routers.mateo-dashboard.tls=true"
-        - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
-        - "traefik.http.routers.mateo-dashboard.service=mateo-dashboard-svc"
-        - "traefik.http.services.mateo-dashboard-svc.loadbalancer.server.port=3000"
+        - "traefik.http.routers.dashboard-router.rule=Host(\"dashboard.mateoia.store\")"
+        - "traefik.http.routers.dashboard-router.entrypoints=websecure"
+        - "traefik.http.routers.dashboard-router.tls=true"
+        - "traefik.http.routers.dashboard-router.tls.certresolver=letsencryptresolver"
+        - "traefik.http.routers.dashboard-router.service=dashboard-service"
+        - "traefik.http.services.dashboard-service.loadbalancer.server.port=3000"
 
 networks:
   BelanzeNet:
