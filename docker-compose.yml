@@ -25,4 +25,4 @@ services:
 networks:
   default:
     external:
-      name: traefik_public # Ajusta este nombre al nombre de la red que usa tu Traefik
+      name: BelanzeNet # Nombre de red confirmado por el usuario
