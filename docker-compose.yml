@@ -6,24 +6,15 @@ services:
     restart: always
     networks:
       - BelanzeNet
-    # Etiquetas para Docker Provider (si Portainer despliega como contenedor suelto)
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mateo-final-rt.rule=Host(`dashboard.mateoia.store`)"
-      - "traefik.http.routers.mateo-final-rt.entrypoints=websecure"
-      - "traefik.http.routers.mateo-final-rt.tls=true"
-      - "traefik.http.routers.mateo-final-rt.tls.certresolver=letsencryptresolver"
-      - "traefik.http.services.mateo-final-svc.loadbalancer.server.port=3000"
-    # Etiquetas para Swarm Provider (si Portainer despliega como Stack de Swarm)
     deploy:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=BelanzeNet"
-        - "traefik.http.routers.mateo-final-rt.rule=Host(`dashboard.mateoia.store`)"
-        - "traefik.http.routers.mateo-final-rt.entrypoints=websecure"
-        - "traefik.http.routers.mateo-final-rt.tls=true"
-        - "traefik.http.routers.mateo-final-rt.tls.certresolver=letsencryptresolver"
-        - "traefik.http.services.mateo-final-svc.loadbalancer.server.port=3000"
+        - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
+        - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
+        - "traefik.http.routers.mateo-dashboard.tls=true"
+        - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
 
 networks:
   BelanzeNet:
