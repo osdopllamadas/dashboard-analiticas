@@ -4,20 +4,16 @@ services:
   dashboard:
     build: .
     restart: always
-    env_file:
-      - .env.local
     networks:
       - BelanzeNet
     deploy:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=BelanzeNet"
-        # Configuración del Router (Cuidado: Nombre único)
-        - "traefik.http.routers.mateo-dashboard-router.rule=Host(`dashboard.mateoia.store`)"
-        - "traefik.http.routers.mateo-dashboard-router.entrypoints=websecure"
-        - "traefik.http.routers.mateo-dashboard-router.tls.certresolver=letsencryptresolver"
-        # Configuración del Servicio
-        - "traefik.http.services.mateo-dashboard-service.loadbalancer.server.port=3000"
+        - "traefik.http.routers.mateo-dashboard.rule=Host(`dashboard.mateoia.store`)"
+        - "traefik.http.routers.mateo-dashboard.entrypoints=websecure"
+        - "traefik.http.routers.mateo-dashboard.tls.certresolver=letsencryptresolver"
+        - "traefik.http.services.mateo-dashboard.loadbalancer.server.port=3000"
 
 networks:
   BelanzeNet:
